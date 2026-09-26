@@ -1,0 +1,10 @@
+[project]
+name = "amap-api-test"
+version = "0.1.0"
+description = "基于 pytest + requests 的高德开放平台 Web 服务接口自动化测试框架"
+requires-python = ">=3.14"
+dependencies = [
+    "pytest>=9.1.1",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+]
