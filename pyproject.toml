@@ -5,6 +5,12 @@ description = "基于 pytest + requests 的高德开放平台 Web 服务接口�
 requires-python = ">=3.14"
 dependencies = [
     "pytest>=9.1.1",
+    "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
     "requests>=2.34.2",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# 让中文用例名在终端直接显示，而不是被转义成 \u4e2d\u6587
+disable_test_id_escaping_and_forfeit_all_rights_to_community_support = true
