@@ -1,0 +1,20 @@
+# 地理编码接口（v3/geocode/regeo）用例集
+#
+# 字段说明
+#   case      用例名，会作为 pytest 的用例 ID 显示在报告里
+#   params    直接映射为 URL 查询参数，key 由框架统一注入，这里不用写
+#   expect    期望结果，由断言解释器逐条校验
+#     http_status  HTTP 状态码
+#     body         响应体字段的精确匹配
+#     has_keys     必须存在的字段
+#     not_has_keys 必须不存在的字段
+
+cases:
+  - case: 正向-正常location
+    params:
+      location: 116.481488,39.990464
+    expect:
+      http_status: 200
+      body: { status: "1", infocode: "10000" }
+      has_keys: [ regeocode ]
+      types: { regeocode: dict }

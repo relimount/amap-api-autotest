@@ -4,6 +4,7 @@ TYPE_MAP = {"str": str, "int": int, "list": list, "dict": dict, "bool": bool}
 class AssertUtil:
 
     def assert_response(self,resp,expect):
+        """断言"""
         assert resp.status_code == expect["http_status"], resp.text
         body = resp.json()
 

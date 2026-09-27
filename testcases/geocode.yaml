@@ -12,7 +12,6 @@
 
 cases:
   - case: 正向-详细地址
-    path: v3/geocode/geo
     params:
       address: 北京市朝阳区阜通东大街6号
     expect:
@@ -22,14 +21,12 @@ cases:
       types: {count: str, geocodes: list}
 
   - case: 缺少必填参数address
-    path: v3/geocode/geo
     params: {}
     expect:
       http_status: 200
       body: {status: "0", infocode: "20001"}
 
   - case: address为空串
-    path: v3/geocode/geo
     params:
       address: ""
     expect:
@@ -37,7 +34,6 @@ cases:
       body: {status: "0"}
 
   - case: address为不存在的地名
-    path: v3/geocode/geo
     params:
       address: 这不是一个地名
     expect:
@@ -46,7 +42,6 @@ cases:
       not_has_keys: [geocodes, count]
 
   - case: 选填参数city限定城市
-    path: v3/geocode/geo
     params:
       address: 人民路
       city: 成都
@@ -55,7 +50,6 @@ cases:
       body: {status: "1"}
 
   - case: 选填参数city传空串
-    path: v3/geocode/geo
     params:
       address: 人民路
       city: ""

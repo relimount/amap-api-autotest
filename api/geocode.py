@@ -14,3 +14,8 @@ class GeocodeAPI:
         params = {"address": address, **optional}
         params = {k: v for k, v in params.items() if v is not None}
         return self.session.get(f"{BASE_URL}v3/geocode/geo", params=params, timeout=self.timeout)
+
+    def get_regeo(self, location = None, **optional):
+        params = {"location": location, **optional}
+        params = {k: v for k, v in params.items() if v is not None}
+        return self.session.get(f"{BASE_URL}v3/geocode/regeo", params=params, timeout=self.timeout)

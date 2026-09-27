@@ -3,7 +3,7 @@ import yaml
 
 from api.geocode import GeocodeAPI
 from assert_util import AssertUtil
-from config import AMAP_KEY, BASE_URL, TIMEOUT, PROJECT_ROOT
+from config import PROJECT_ROOT
 
 CASE_FILE = PROJECT_ROOT / "testcases" / "geocode.yaml"
 CASES = yaml.safe_load(CASE_FILE.read_text(encoding="utf-8"))["cases"]
@@ -17,3 +17,4 @@ def test_geocode(case):
 
     expect = case["expect"]
     assert_util.assert_response(resp, expect)
+
