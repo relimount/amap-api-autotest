@@ -1,13 +1,14 @@
-# 地理编码接口（v3/geocode/regeo）用例集
+# 逆地理编码接口（v3/geocode/regeo）用例集
 #
 # 字段说明
 #   case      用例名，会作为 pytest 的用例 ID 显示在报告里
-#   params    直接映射为 URL 查询参数，key 由框架统一注入，这里不用写
+#   params    直接映射为 URL 查询参数；key 由 api 层统一注入，这里不用写
 #   expect    期望结果，由断言解释器逐条校验
 #     http_status  HTTP 状态码
-#     body         响应体字段的精确匹配
+#     body         字段精确匹配。路径用点号分层：regeocode.addressComponent.adcode
 #     has_keys     必须存在的字段
 #     not_has_keys 必须不存在的字段
+#     types        字段类型，取值见 assert_util.TYPE_MAP
 
 cases:
   - case: 正向-正常location
@@ -15,6 +16,132 @@ cases:
       location: 116.481488,39.990464
     expect:
       http_status: 200
-      body: { status: "1", infocode: "10000" }
-      has_keys: [ regeocode ]
-      types: { regeocode: dict }
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": "110105"
+        "regeocode.addressComponent.district": "朝阳区"
+      has_keys:
+        - regeocode
+        - regeocode.addressComponent
+        - regeocode.formatted_address
+        - regeocode.addressComponent.province
+        - regeocode.addressComponent.citycode
+        - regeocode.addressComponent.towncode
+        - regeocode.addressComponent.township
+        - regeocode.addressComponent.streetNumber
+        - regeocode.addressComponent.country
+        - regeocode.addressComponent.businessAreas
+        - regeocode.addressComponent.building
+        - regeocode.addressComponent.neighborhood
+      types:
+        regeocode: dict
+        regeocode.addressComponent: dict
+        regeocode.addressComponent.businessAreas: list
+
+  - case: 缺location
+    params: {}
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20000"
+      not_has_keys:
+        - regeocode
+
+  - case: location为空串
+    params:
+      location: ""
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": []
+        "regeocode.formatted_address": []
+      has_keys:
+        - regeocode
+        - regeocode.addressComponent
+      types:
+        regeocode: dict
+
+  - case: location格式非法
+    params:
+      location: abc
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": []
+        "regeocode.formatted_address": []
+      types:
+        regeocode: dict
+
+  - case: 经纬度颠倒
+    params:
+      location: 39.990464,116.481488
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": []
+      types:
+        regeocode: dict
+
+  - case: 经度超出范围
+    params:
+      location: 999.9,39.990464
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": []
+      types:
+        regeocode: dict
+
+  - case: extensions为base不含pois
+    params:
+      location: 116.481488,39.990464
+      extensions: base
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": "110105"
+      has_keys:
+        - regeocode
+        - regeocode.addressComponent
+        - regeocode.formatted_address
+      not_has_keys:
+        - regeocode.pois
+        - regeocode.roads
+        - regeocode.aois
+        - regeocode.roadinters
+
+  - case: extensions为all含pois
+    params:
+      location: 116.481488,39.990464
+      extensions: all
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "regeocode.addressComponent.adcode": "110105"
+      has_keys:
+        - regeocode
+        - regeocode.addressComponent
+        - regeocode.formatted_address
+        - regeocode.pois
+        - regeocode.roads
+        - regeocode.aois
+        - regeocode.roadinters
+      types:
+        regeocode.pois: list
+        regeocode.roads: list
+        regeocode.aois: list
+        regeocode.roadinters: list
