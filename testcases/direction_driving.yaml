@@ -1,0 +1,31 @@
+# 驾驶路径规划（v3/direction/driving?parameters）
+
+cases:
+  - case: 正向
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "route.origin": "116.481028,39.989643"
+        "route.destination": "116.434446,39.90816"
+      has_keys:
+        - count
+        - route
+        - route.paths
+        - route.paths.0.distance
+        - route.paths.0.duration
+        - route.paths.0.strategy
+        - route.paths.0.tolls
+        - route.paths.0.toll_distance
+        - route.paths.0.steps
+        - route.paths.0.restriction
+        - route.paths.0.traffic_lights
+      types:
+        count: str
+        route: dict
+        route.paths: list
+        route.paths.0.steps: list

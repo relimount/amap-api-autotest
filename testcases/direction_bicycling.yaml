@@ -1,0 +1,26 @@
+# 骑行路径规划（v4/direction/bicycling）
+
+cases:
+  - case: 正向官方用例
+    params:
+      origin: 116.434307,39.90909
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        errcode: 0
+        errmsg: "OK"
+      has_key:
+        - errdetail
+        - ext
+        - data.destination
+        - data.origin
+        - data.paths.0.distance
+        - data.paths.0.duration
+        - data.paths.0.steps
+      types:
+        data.destination: str
+        data.origin: str
+        data.paths.0.distance: int
+        data.paths.0.duration: int
+        data.paths.0.steps: list

@@ -1,0 +1,123 @@
+# 步行路径规划接口（v3/direction/walking）用例集
+#
+# 字段说明
+#   case      用例名，会作为 pytest 的用例 ID 显示在报告里
+#   params    直接映射为 URL 查询参数；key 由 api 层统一注入，这里不用写
+#   expect    期望结果，由断言解释器逐条校验
+#     http_status  HTTP 状态码
+#     body         字段精确匹配。路径用点号分层：route.paths.0.steps.0.instruction
+#     has_keys     必须存在的字段
+#     not_has_keys 必须不存在的字段
+#     types        字段类型，取值见 assert_util.TYPE_MAP
+
+
+cases:
+  - case: 正向-请求成功
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "route.origin": "116.481028,39.989643"
+        "route.destination": "116.434446,39.90816"
+      has_keys:
+        - count
+        - route
+        - route.paths
+        - route.paths.0.distance
+        - route.paths.0.duration
+        - route.paths.0.steps
+        - route.paths.0.steps.0.instruction
+        - route.paths.0.steps.0.polyline
+        - route.paths.0.steps.0.distance
+        - route.paths.0.steps.0.duration
+      types:
+        count: str
+        route: dict
+        route.paths: list
+        route.paths.0.steps: list
+
+  - case: 缺destination
+    params:
+      origin: 116.481028,39.989643
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20001"
+      not_has_keys:
+        - route
+        - count
+
+  - case: 缺origin
+    params:
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20000"
+      not_has_keys:
+        - route
+        - count
+
+  - case: origin格式非法
+    params:
+      origin: abc
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20000"
+      not_has_keys:
+        - route
+        - count
+
+  - case: origin坐标超出范围
+    params:
+      origin: 999.9,999.9
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20000"
+      not_has_keys:
+        - route
+        - count
+
+  - case: 起终点相同
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.481028,39.989643
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "route.paths.0.distance": "1"
+        "route.paths.0.duration": "1"
+      has_keys:
+        - route
+        - route.paths
+        - route.paths.0.steps
+      types:
+        route: dict
+        route.paths: list
+
+  - case: 起终点距离超出步行范围
+    params:
+      origin: 116.481028,39.989643
+      destination: 121.472644,31.231706
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        infocode: "20803"
+      not_has_keys:
+        - route
+        - count

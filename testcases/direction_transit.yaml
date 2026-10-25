@@ -1,0 +1,31 @@
+# 步行路径规划接口（v3/direction/transit/integrated）用例集
+
+cases:
+  - case: 正向
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+      city: 北京
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "route.origin": "116.481028,39.989643"
+        "route.destination": "116.434446,39.90816"
+      has_keys:
+        - count
+        - route
+        - route.transits
+        - route.transits.0.cost
+        - route.transits.0.duration
+        - route.transits.0.segments
+        - route.transits.0.segments.0.taxi
+        - route.transits.0.segments.0.walking
+        - route.transits.0.segments.0.bus
+        - route.transits.0.segments.0.entrance
+      types:
+        count: str
+        route: dict
+        route.transits: list
+        route.transits.0.segments: list

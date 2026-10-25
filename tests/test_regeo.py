@@ -14,6 +14,5 @@ assert_util = AssertUtil()
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c["case"])
 def test_regeo(case):
     resp = regeo.get_regeo(**case["params"])
-    expect = case["expect"]
-    assert_util.assert_response(resp, expect)
+    assert_util.assert_response(resp, case["expect"])
 

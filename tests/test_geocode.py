@@ -14,7 +14,5 @@ assert_util = AssertUtil()
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c["case"])
 def test_geocode(case):
     resp = geocode.get_geocode(**case["params"])
-
-    expect = case["expect"]
-    assert_util.assert_response(resp, expect)
+    assert_util.assert_response(resp, expect = case["expect"])
 
