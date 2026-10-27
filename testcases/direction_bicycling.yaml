@@ -10,7 +10,7 @@ cases:
       body:
         errcode: 0
         errmsg: "OK"
-      has_key:
+      has_keys:
         - errdetail
         - ext
         - data.destination

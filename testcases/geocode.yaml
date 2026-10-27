@@ -31,6 +31,7 @@ cases:
         - "geocodes.0.citycode"
         - "geocodes.0.district"
         - "geocodes.0.number"
+        - "geocodes.0.location"
       types:
         count: str
         geocodes: list

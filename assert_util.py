@@ -1,5 +1,5 @@
 TYPE_MAP = {"str": str, "int": int, "list": list, "dict": dict, "bool": bool}
-
+_ALLOWED_KEYS = {"http_status", "body", "has_keys", "not_has_keys", "types"}
 
 class _MissingType:
     """哨兵值"""
@@ -12,6 +12,7 @@ _MISSING = _MissingType()
 class AssertUtil:
 
     def _get_by_path(self, data, path, default=_MISSING):
+
         if not isinstance(path, str) or not path:
             raise ValueError("path为非空字符串")
 
@@ -32,6 +33,11 @@ class AssertUtil:
         """按 expect 的声明逐层校验响应"""
         assert resp.status_code == expect["http_status"], resp.text
         data = resp.json()
+        # 防静默假绿
+        unexpect = set(expect) - _ALLOWED_KEYS
+        if unexpect:
+            raise ValueError(f"expect 里有未知的键：{unexpect}")
+
 
         for field, value in expect.get("body", {}).items():
             actual = self._get_by_path(data, field, default = None)
