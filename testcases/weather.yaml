@@ -1,0 +1,21 @@
+# 天气接口（v3/weather/weatherInfo）用例集
+
+cases:
+  - case: 正向用例
+    params:
+      city: 110101
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "lives.0.province": "北京"
+      has_keys:
+        - "lives.0.weather"
+        - "lives.0.temperature"
+        - "lives.0.winddirection"
+        - "lives.0.windpower"
+        - "lives.0.humidity"
+        - "lives.0.temperature"
+        - "lives.0.temperature_float"
+        - "lives.0.humidity_float"
