@@ -1,7 +1,7 @@
-# 步行路径规划接口（v3/direction/transit/integrated）用例集
+# 公交路径规划（v3/direction/transit/integrated）用例集
 
 cases:
-  - case: 正向
+  - case: 正向-市内公交换乘
     params:
       origin: 116.481028,39.989643
       destination: 116.434446,39.90816
@@ -29,3 +29,78 @@ cases:
         route: dict
         route.transits: list
         route.transits.0.segments: list
+
+  - case: 正向-跨城带cityd
+    params:
+      origin: 116.481028,39.989643
+      destination: 117.20,39.13
+      city: 北京
+      cityd: 天津
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+      has_keys:
+        - count
+        - route.transits.0.cost
+        - route.transits.0.duration
+        - route.transits.0.segments
+      types:
+        count: str
+        route.transits: list
+
+  - case: 缺origin
+    params:
+      destination: 116.434446,39.90816
+      city: 北京
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: INVALID_PARAMS
+        infocode: "20000"
+      not_has_keys:
+        - count
+        - route
+
+  - case: 缺destination
+    params:
+      origin: 116.481028,39.989643
+      city: 北京
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: MISSING_REQUIRED_PARAMS
+        infocode: "20001"
+      not_has_keys:
+        - count
+        - route
+
+  - case: 缺city-文档必填但接口未校验
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+      city: null           # 显式传空，不是漏写参数
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+      has_keys:
+        - route.transits.0.cost
+
+  - case: 起终点相同-静默成功
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.481028,39.989643
+      city: 北京
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        count: "0"
+        "route.distance": "0"
+        "route.transits": []

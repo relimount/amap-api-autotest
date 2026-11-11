@@ -1,4 +1,4 @@
-# 骑行路径规划（v4/direction/bicycling）
+# 骑行路径规划（v4/direction/bicycling）用例集
 
 cases:
   - case: 正向官方用例
@@ -24,3 +24,72 @@ cases:
         data.paths.0.distance: int
         data.paths.0.duration: int
         data.paths.0.steps: list
+
+  - case: 缺origin-走v3错误壳
+    params:
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: INVALID_PARAMS
+        infocode: "20000"
+      not_has_keys:
+        - errcode
+        - errmsg
+        - data
+
+  - case: 缺destination-走v4错误壳
+    params:
+      origin: 116.434307,39.90909
+    expect:
+      http_status: 200
+      body:
+        errcode: 20001
+        errmsg: MISSING_REQUIRED_PARAMS
+      not_has_keys:
+        - status
+        - info
+        - infocode
+        - data
+
+  - case: 起终点相同
+    params:
+      origin: 116.434307,39.90909
+      destination: 116.434307,39.90909
+    expect:
+      http_status: 200
+      body:
+        errcode: 0
+        errmsg: "OK"
+      has_keys:
+        - data.paths.0.distance
+        - data.paths.0.duration
+      types:
+        data.paths.0.distance: int
+
+  - case: 正向-跨城仍返回路径
+    params:
+      origin: 116.434307,39.90909
+      destination: 117.20,39.13
+    expect:
+      http_status: 200
+      body:
+        errcode: 0
+        errmsg: "OK"
+      has_keys:
+        - data.paths.0.distance
+        - data.paths.0.steps
+
+  - case: 未知参数被静默忽略
+    params:
+      origin: 116.434307,39.90909
+      destination: 116.434446,39.90816
+      strategy: abc
+    expect:
+      http_status: 200
+      body:
+        errcode: 0
+        errmsg: "OK"
+      has_keys:
+        - data.paths.0.distance

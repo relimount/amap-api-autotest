@@ -1,21 +1,120 @@
 # 天气接口（v3/weather/weatherInfo）用例集
 
 cases:
-  - case: 正向用例
+  - case: 正向-实况base
     params:
-      city: 110101
+      city: "110101"
+      extensions: base
     expect:
       http_status: 200
       body:
         status: "1"
         infocode: "10000"
+        count: "1"
         "lives.0.province": "北京"
       has_keys:
-        - "lives.0.weather"
-        - "lives.0.temperature"
-        - "lives.0.winddirection"
-        - "lives.0.windpower"
-        - "lives.0.humidity"
-        - "lives.0.temperature"
-        - "lives.0.temperature_float"
-        - "lives.0.humidity_float"
+        - lives.0.city
+        - lives.0.adcode
+        - lives.0.weather
+        - lives.0.temperature
+        - lives.0.winddirection
+        - lives.0.windpower
+        - lives.0.humidity
+        - lives.0.reporttime
+        - lives.0.temperature_float
+        - lives.0.humidity_float
+      not_has_keys:
+        - forecasts
+
+  - case: 正向-预报all
+    params:
+      city: "110101"
+      extensions: all
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        count: "1"
+        "forecasts.0.province": "北京"
+      has_keys:
+        - forecasts.0.city
+        - forecasts.0.adcode
+        - forecasts.0.reporttime
+        - forecasts.0.casts
+        - forecasts.0.casts.0.date
+        - forecasts.0.casts.0.dayweather
+        - forecasts.0.casts.0.nightweather
+        - forecasts.0.casts.0.daytemp
+        - forecasts.0.casts.0.nighttemp
+      not_has_keys:
+        - lives
+
+  - case: 缺city
+    params:
+      extensions: base
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: INVALID_PARAMS
+        infocode: "20000"
+      not_has_keys:
+        - count
+        - lives
+        - forecasts
+
+  - case: city为空串
+    params:
+      city: ""
+      extensions: base
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: INVALID_PARAMS
+        infocode: "20000"
+      not_has_keys:
+        - count
+        - lives
+
+  - case: extensions非法值
+    params:
+      city: "110101"
+      extensions: abc
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: INVALID_PARAMS
+        infocode: "20000"
+      not_has_keys:
+        - count
+        - lives
+
+  - case: 非法city-静默返回畸形lives
+    params:
+      city: "999999"
+      extensions: base
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        count: "1"          # 报 1 条，实际里面是空的
+        "lives.0": []       # 真实结构是 [[]]，套了一层空数组
+      not_has_keys:
+        - lives.0.city
+        - lives.0.weather
+
+  - case: city多值不支持批量
+    params:
+      city: "110101,310000"
+      extensions: base
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        count: "0"
+        lives: []

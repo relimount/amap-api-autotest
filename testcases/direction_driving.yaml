@@ -1,7 +1,7 @@
-# 驾驶路径规划（v3/direction/driving?parameters）
+# 驾驶路径规划（v3/direction/driving）用例集
 
 cases:
-  - case: 正向
+  - case: 正向-默认策略
     params:
       origin: 116.481028,39.989643
       destination: 116.434446,39.90816
@@ -29,3 +29,97 @@ cases:
         route: dict
         route.paths: list
         route.paths.0.steps: list
+
+  - case: 正向-strategy距离优先
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+      strategy: 2
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+      has_keys:
+        - route.paths.0.distance
+        - route.paths.0.duration
+        - route.paths.0.steps
+      types:
+        route.paths.0.distance: str
+        route.paths.0.duration: str
+
+  - case: 正向-strategy10返回多方案
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+      strategy: 10
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+      has_keys:
+        - route.paths.0.distance
+        - route.paths.1.distance      # 至少两条，证明是多方案返回
+      types:
+        route.paths: list
+
+  - case: 正向-途经点waypoints
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.434446,39.90816
+      waypoints: 116.46,39.95
+      strategy: 0
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+      has_keys:
+        - route.paths.0.distance
+        - route.paths.0.steps
+      types:
+        route.paths.0.distance: str
+
+  - case: 起终点相同-返回异常距离
+    params:
+      origin: 116.481028,39.989643
+      destination: 116.481028,39.989643
+    expect:
+      http_status: 200
+      body:
+        status: "1"
+        infocode: "10000"
+        "route.origin": "116.481028,39.989643"
+        "route.destination": "116.481028,39.989643"
+      has_keys:
+        - route.paths.0.distance
+        - route.paths.0.duration
+      types:
+        route.paths.0.distance: str
+
+  - case: 缺origin
+    params:
+      destination: 116.434446,39.90816
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: MISSING_REQUIRED_PARAMS
+        infocode: "20001"
+      not_has_keys:
+        - count
+        - route
+
+  - case: 缺destination
+    params:
+      origin: 116.481028,39.989643
+    expect:
+      http_status: 200
+      body:
+        status: "0"
+        info: MISSING_REQUIRED_PARAMS
+        infocode: "20001"
+      not_has_keys:
+        - count
+        - route
