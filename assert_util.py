@@ -1,4 +1,4 @@
-TYPE_MAP = {"str": str, "int": int, "list": list, "dict": dict, "bool": bool}
+TYPE_MAP = {"str": str, "int": int, "list": list, "dict": dict, "bool": bool, "float": float, "null": type(None)}
 _ALLOWED_KEYS = {"http_status", "body", "has_keys", "not_has_keys", "types"}
 
 class _MissingType:
@@ -34,7 +34,7 @@ class AssertUtil:
         try:
             return resp.json()
         except ValueError:
-            raise AssertionError(f"响应不是json")
+            raise AssertionError(f"响应不是 JSON：status={resp.status_code}, body={resp.text[:200]!r}")
 
     def _type_ok(self, actual, type_name):
         """防bool误判"""
@@ -46,11 +46,18 @@ class AssertUtil:
             return isinstance(actual, (int, float)) and not isinstance(actual, bool)
         if type_name == "null":
             return actual is None
+
+        if type_name not in TYPE_MAP:
+            raise ValueError(f"未知的类型配置: {type_name}，请检查测试用例 YAML")
         return isinstance(actual, TYPE_MAP[type_name])
 
     def assert_response(self, resp, expect):
         """按 expect 的声明逐层校验响应"""
-        assert resp.status_code == expect["http_status"], resp.text
+        try:
+            assert resp.status_code == expect["http_status"], resp.text
+        except KeyError:
+            raise ValueError("未配置http_status")
+
         data = self._safe_json(resp)
         # 防静默假绿
         unexpect = set(expect) - _ALLOWED_KEYS
