@@ -132,7 +132,7 @@ cases:
 
   - case: address不存在
     params:
-      address: 这不是一个地名
+      address: asdfghjklqwerty
     expect:
       http_status: 200
       body:
