@@ -1,13 +1,12 @@
-import requests
-
 import config
 from config import AMAP_KEY, TIMEOUT
+from utils.http import SESSION
 
 
 class GeocodeAPI:
 
     def __init__(self):
-        self.session = requests.Session()
+        self.session = SESSION
         self.timeout = TIMEOUT
 
     def get_geocode(self, address = None, key = AMAP_KEY, **optional):

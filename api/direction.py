@@ -1,12 +1,10 @@
-import requests
-
-import config
 from config import TIMEOUT, AMAP_KEY
+from utils.http import  SESSION
 
 
 class DirectionAPI:
     def __init__(self):
-        self.session = requests.session()
+        self.session = SESSION
         self.timeout = TIMEOUT
 
 

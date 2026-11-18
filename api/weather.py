@@ -1,13 +1,12 @@
-import requests
-
 import config
 from config import TIMEOUT, AMAP_KEY
+from utils.http import SESSION
 
 
 class WeatherAPI:
 
     def __init__(self):
-        self.session = requests.Session()
+        self.session = SESSION
         self.timeout = TIMEOUT
 
     def get_weather(self, city = None, key = AMAP_KEY, **optional):
