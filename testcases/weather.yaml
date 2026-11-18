@@ -25,6 +25,7 @@ cases:
         - lives.0.humidity_float
       not_has_keys:
         - forecasts
+    smoke: true
 
   - case: 正向-预报all
     params:

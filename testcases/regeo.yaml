@@ -38,6 +38,7 @@ cases:
         regeocode: dict
         regeocode.addressComponent: dict
         regeocode.addressComponent.businessAreas: list
+    smoke: true
 
   - case: 缺location
     params: {}

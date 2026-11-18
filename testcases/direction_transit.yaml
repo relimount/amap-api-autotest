@@ -29,6 +29,7 @@ cases:
         route: dict
         route.transits: list
         route.transits.0.segments: list
+    smoke: true
 
   - case: 正向-跨城带cityd
     params:

@@ -29,6 +29,7 @@ cases:
         route: dict
         route.paths: list
         route.paths.0.steps: list
+    smoke: true
 
   - case: 正向-strategy距离优先
     params:

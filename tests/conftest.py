@@ -19,7 +19,8 @@ def pytest_generate_tests(metafunc):
         return
     name = metafunc.module.__name__.split(".")[-1].removeprefix("test_")
     case = yaml.safe_load((project_config.PROJECT_ROOT / "testcases" / f"{name}.yaml").read_text(encoding="utf-8"))["cases"]
-    metafunc.parametrize("case", case, ids = lambda c: c["case"])
+    params = [pytest.param(c, marks=pytest.mark.smoke) if c.get("smoke") else c for c in case]
+    metafunc.parametrize("case", params, ids = lambda c: c["case"])
 
 def pytest_addoption(parser):
     parser.addoption("--env", default="prod", choices=list(project_config.ENVIRONMENT), help="被测环境")

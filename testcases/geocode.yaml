@@ -35,6 +35,7 @@ cases:
       types:
         count: str
         geocodes: list
+    smoke: true
 
   - case: 正向-简略地址
     params:

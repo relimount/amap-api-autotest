@@ -24,6 +24,7 @@ cases:
         data.paths.0.distance: int
         data.paths.0.duration: int
         data.paths.0.steps: list
+    smoke: true
 
   - case: 缺origin-走v3错误壳
     params:
