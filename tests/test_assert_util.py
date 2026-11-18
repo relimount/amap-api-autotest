@@ -2,7 +2,7 @@
 import allure
 import pytest
 
-from assert_util import AssertUtil, _MISSING
+from utils.assert_util import AssertUtil, MISSING
 
 pytestmark = [
     allure.feature("断言引擎"),
@@ -60,19 +60,19 @@ class TestGetByPath:
         assert util._get_by_path(data, "route.paths.0.steps.0.instruction") == "向东"
 
     def test_missing_key_returns_sentinel(self):
-        assert util._get_by_path({"a": 1}, "b") is _MISSING
+        assert util._get_by_path({"a": 1}, "b") is MISSING
 
     def test_missing_nested_key_returns_sentinel(self):
-        assert util._get_by_path({"a": {"b": 1}}, "a.c") is _MISSING
+        assert util._get_by_path({"a": {"b": 1}}, "a.c") is MISSING
 
     def test_index_out_of_range_returns_sentinel(self):
-        assert util._get_by_path({"g": [1]}, "g.9") is _MISSING
+        assert util._get_by_path({"g": [1]}, "g.9") is MISSING
 
     def test_non_numeric_index_on_list_returns_sentinel(self):
-        assert util._get_by_path({"g": [1]}, "g.abc") is _MISSING
+        assert util._get_by_path({"g": [1]}, "g.abc") is MISSING
 
     def test_scalar_in_the_middle_returns_sentinel(self):
-        assert util._get_by_path({"a": "str"}, "a.b") is _MISSING
+        assert util._get_by_path({"a": "str"}, "a.b") is MISSING
 
     def test_empty_path_raises(self):
         with pytest.raises(ValueError):
@@ -113,7 +113,7 @@ class TestBodyAssert:
 
 
 class TestTypeAssert:
-    """types 段：类型校验。重点回归 bool 不能被当成 int 放行。"""
+    """类型校验"""
 
     def test_int_ok(self):
         should_pass({"x": 3}, {"http_status": 200, "types": {"x": "int"}})

@@ -1,7 +1,7 @@
 import allure
 
 from api.geocode import GeocodeAPI
-from assert_util import AssertUtil
+from utils.assert_util import AssertUtil
 from utils.report import mark_case
 
 

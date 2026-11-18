@@ -9,11 +9,11 @@ class _MissingType:
         return "<字段不存在>"
 
 
-_MISSING = _MissingType()
+MISSING = _MissingType()
 
 class AssertUtil:
 
-    def _get_by_path(self, data, path, default=_MISSING):
+    def _get_by_path(self, data, path, default=MISSING):
 
         if not isinstance(path, str) or not path:
             raise ValueError("path为非空字符串")
@@ -75,16 +75,16 @@ class AssertUtil:
 
         for field, value in expect.get("body", {}).items():
             actual = self._get_by_path(data, field)
-            assert actual is not _MISSING, f"字段缺失：{field}"
+            assert actual is not MISSING, f"字段缺失：{field}"
             assert actual == value, f"{field} 期望 {value!r}，实际 {actual!r}"
 
         for field in expect.get("has_keys") or []:
-            assert self._get_by_path(data, field) is not _MISSING, f"缺少字段 {field}"
+            assert self._get_by_path(data, field) is not MISSING, f"缺少字段 {field}"
 
         for field in expect.get("not_has_keys") or []:
-            assert self._get_by_path(data, field) is _MISSING, f"多出字段 {field}"
+            assert self._get_by_path(data, field) is MISSING, f"多出字段 {field}"
 
         for field, type_name in expect.get("types", {}).items():
             actual = self._get_by_path(data, field)
-            assert actual is not _MISSING, f"字段缺失：{field}"
+            assert actual is not MISSING, f"字段缺失：{field}"
             assert self._type_ok(actual, type_name), f"{field} 类型应为 {type_name}，实际 {type(actual).__name__}"
