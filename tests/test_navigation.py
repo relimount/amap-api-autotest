@@ -1,3 +1,5 @@
+import allure
+
 from api.direction import DirectionAPI
 from api.geocode import GeocodeAPI
 
@@ -8,12 +10,16 @@ location1 = '103.828894,30.676067'
 geo = GeocodeAPI()
 direction = DirectionAPI()
 
+
 def _to_code(address):
     body = geo.get_geocode(address).json()
     assert body['status'] == '1', "导航测试: 地理编码失败"
     return body['geocodes'][0]['location']
 
 
+@allure.feature("链路串联")
+@allure.story("编码到导航")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_navigate_driving_address_to_address():
     """测试地址到地址的驾驶导航"""
     begin = _to_code(address1)

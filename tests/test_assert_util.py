@@ -1,7 +1,14 @@
 
+import allure
 import pytest
 
 from assert_util import AssertUtil, _MISSING
+
+pytestmark = [
+    allure.feature("断言引擎"),
+    allure.story("引擎自测"),
+    allure.severity(allure.severity_level.BLOCKER),
+]
 
 
 class FakeResp:

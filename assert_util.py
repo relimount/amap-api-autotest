@@ -1,3 +1,5 @@
+from utils.report import attach_failure
+
 TYPE_MAP = {"str": str, "int": int, "list": list, "dict": dict, "bool": bool, "float": float, "null": type(None)}
 _ALLOWED_KEYS = {"http_status", "body", "has_keys", "not_has_keys", "types"}
 
@@ -52,7 +54,14 @@ class AssertUtil:
         return isinstance(actual, TYPE_MAP[type_name])
 
     def assert_response(self, resp, expect):
-        """按 expect 的声明逐层校验响应"""
+        """失败时把请求与响应贴进报告便于定位。"""
+        try:
+            self._verify(resp, expect)
+        except AssertionError:
+            attach_failure(resp)
+            raise
+
+    def _verify(self, resp, expect):
         try:
             assert resp.status_code == expect["http_status"], resp.text
         except KeyError:
