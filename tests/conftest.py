@@ -3,7 +3,7 @@ import os
 import pytest
 import yaml
 
-from config import PROJECT_ROOT
+import config as project_config
 from utils.ratelimit import TokenBucket
 
 _bucket = TokenBucket(rate_per_sec=float(os.getenv("AMAP_QPS", "2.5")))
@@ -18,5 +18,12 @@ def pytest_generate_tests(metafunc):
     if "case" not in metafunc.fixturenames:
         return
     name = metafunc.module.__name__.split(".")[-1].removeprefix("test_")
-    case = yaml.safe_load((PROJECT_ROOT / "testcases" / f"{name}.yaml").read_text(encoding="utf-8"))["cases"]
+    case = yaml.safe_load((project_config.PROJECT_ROOT / "testcases" / f"{name}.yaml").read_text(encoding="utf-8"))["cases"]
     metafunc.parametrize("case", case, ids = lambda c: c["case"])
+
+def pytest_addoption(parser):
+    parser.addoption("--env", default="prod", choices=list(project_config.ENVIRONMENT), help="被测环境")
+    parser.addoption("--base-url", default=None, help="直接覆盖 base url，可指向 mock 或代理")
+
+def pytest_configure(config):
+    project_config.BASE_URL = config.getoption("--base-url") or project_config.ENVIRONMENT[config.getoption("--env")]

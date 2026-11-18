@@ -1,6 +1,7 @@
 import requests
 
-from config import TIMEOUT, AMAP_KEY, BASE_URL
+import config
+from config import TIMEOUT, AMAP_KEY
 
 
 class DirectionAPI:
@@ -12,19 +13,19 @@ class DirectionAPI:
     def get_walking(self, origin = None, destination = None, key = AMAP_KEY, **optional):
         params = {"origin" : origin, "destination" : destination, "key" : key ,**optional}
         params = {k: v for k, v in params.items() if v is not None}
-        return self.session.get(url = f"{BASE_URL}v3/direction/walking", params = params, timeout=self.timeout)
+        return self.session.get(url = f"{config.BASE_URL}v3/direction/walking", params = params, timeout=self.timeout)
 
     def get_transit(self, origin = None, destination = None, city = None, key = AMAP_KEY, **optional):
         params = {"origin" : origin, "destination" : destination, "city" : city, "key" : key ,**optional}
         params = {k: v for k, v in params.items() if v is not None}
-        return self.session.get(url = f"{BASE_URL}v3/direction/transit/integrated", params = params, timeout=self.timeout)
+        return self.session.get(url = f"{config.BASE_URL}v3/direction/transit/integrated", params = params, timeout=self.timeout)
 
     def get_driving(self, origin = None, destination = None, key = AMAP_KEY, **optional):
         params = {"origin" : origin, "destination" : destination, "key" : key ,**optional}
         params = {k: v for k, v in params.items() if v is not None}
-        return self.session.get(url = f"{BASE_URL}v3/direction/driving", params = params, timeout=self.timeout)
+        return self.session.get(url = f"{config.BASE_URL}v3/direction/driving", params = params, timeout=self.timeout)
 
     def get_bicycling(self, origin = None, destination = None, key = AMAP_KEY, **optional):
         params = {"origin" : origin, "destination" : destination, "key" : key ,**optional}
         params = {k: v for k, v in params.items() if v is not None}
-        return self.session.get(url = f"{BASE_URL}v4/direction/bicycling", params = params, timeout=self.timeout)
+        return self.session.get(url = f"{config.BASE_URL}v4/direction/bicycling", params = params, timeout=self.timeout)
